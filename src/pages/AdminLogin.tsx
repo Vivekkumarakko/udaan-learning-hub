@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { useToast } from '@/components/ui/use-toast';
 import { Shield, Lock, Mail } from 'lucide-react';
 import { z } from 'zod';
@@ -15,6 +16,8 @@ const AdminLogin = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [resetEmail, setResetEmail] = useState('');
+  const [showResetDialog, setShowResetDialog] = useState(false);
 
   // Check if already logged in as admin
   useEffect(() => {
@@ -86,6 +89,35 @@ const AdminLogin = () => {
       toast({
         title: 'Login Failed',
         description: error.message || 'Invalid credentials or insufficient permissions',
+        variant: 'destructive',
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handlePasswordReset = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoading(true);
+
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(resetEmail, {
+        redirectTo: `${window.location.origin}/admin-login`,
+      });
+
+      if (error) throw error;
+
+      toast({
+        title: 'Check your email!',
+        description: 'Password reset link has been sent to your email.',
+      });
+
+      setShowResetDialog(false);
+      setResetEmail('');
+    } catch (error: any) {
+      toast({
+        title: 'Reset Failed',
+        description: error.message || 'Please try again',
         variant: 'destructive',
       });
     } finally {
@@ -174,6 +206,34 @@ const AdminLogin = () => {
               )}
             </Button>
           </form>
+
+          <Dialog open={showResetDialog} onOpenChange={setShowResetDialog}>
+            <DialogTrigger asChild>
+              <Button variant="link" className="w-full text-sm text-muted-foreground mt-2">
+                Forgot Password?
+              </Button>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Reset Admin Password</DialogTitle>
+                <DialogDescription>
+                  Enter your admin email address and we'll send you a reset link.
+                </DialogDescription>
+              </DialogHeader>
+              <form onSubmit={handlePasswordReset} className="space-y-4">
+                <Input
+                  type="email"
+                  placeholder="admin@example.com"
+                  value={resetEmail}
+                  onChange={(e) => setResetEmail(e.target.value)}
+                  required
+                />
+                <Button type="submit" className="w-full" disabled={isLoading}>
+                  {isLoading ? 'Sending...' : 'Send Reset Link'}
+                </Button>
+              </form>
+            </DialogContent>
+          </Dialog>
 
           <div className="mt-6 text-center">
             <Button 
