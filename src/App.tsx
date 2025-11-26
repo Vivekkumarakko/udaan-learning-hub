@@ -14,6 +14,9 @@ import TutorDashboard from "./pages/TutorDashboard";
 import AdminDashboard from "./pages/AdminDashboard";
 import Study from "./pages/Study";
 import FunActivities from "./pages/FunActivities";
+import DrawingActivity from "./pages/DrawingActivity";
+import RhymesActivity from "./pages/RhymesActivity";
+import QuizActivity from "./pages/QuizActivity";
 import Videos from "./pages/Videos";
 import LifeSkills from "./pages/LifeSkills";
 import CivicSense from "./pages/CivicSense";
@@ -45,6 +48,9 @@ const App = () => {
               <Route path="/admin-dashboard" element={<AdminDashboard />} />
               <Route path="/study" element={<Study />} />
               <Route path="/fun" element={<FunActivities />} />
+              <Route path="/fun/drawing" element={<DrawingActivity />} />
+              <Route path="/fun/rhymes" element={<RhymesActivity />} />
+              <Route path="/fun/quiz" element={<QuizActivity />} />
               <Route path="/videos" element={<Videos />} />
               <Route path="/life-skills" element={<LifeSkills />} />
               <Route path="/civic-sense" element={<CivicSense />} />
