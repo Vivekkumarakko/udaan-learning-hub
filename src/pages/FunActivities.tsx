@@ -1,4 +1,4 @@
-import { ArrowLeft, Palette, Scissors, Music, Puzzle, Trophy } from 'lucide-react';
+import { ArrowLeft, Palette, Scissors, Music, Puzzle, Trophy, BookOpen, Sparkles, Gamepad2, Newspaper, Mic } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { useLanguage } from '@/contexts/LanguageContext';
@@ -31,16 +31,46 @@ const FunActivities = () => {
       description: { en: 'Sing along with fun songs!', hi: 'मज़ेदार गानों के साथ गाएं!' },
     },
     {
+      title: { en: 'Singing & Music', hi: 'गायन और संगीत' },
+      icon: Mic,
+      gradient: 'bg-gradient-warm',
+      description: { en: 'Learn songs and music activities', hi: 'गाने और संगीत गतिविधियाँ सीखें' },
+    },
+    {
       title: t('fun.puzzles'),
       icon: Puzzle,
-      gradient: 'bg-gradient-warm',
-      description: { en: 'Solve puzzles and play games', hi: 'पहेलियाँ सुलझाएं और खेल खेलें' },
+      gradient: 'bg-gradient-secondary',
+      description: { en: 'Solve puzzles and brain teasers', hi: 'पहेलियाँ और दिमागी खेल सुलझाएं' },
+    },
+    {
+      title: { en: 'Fun Games', hi: 'मज़ेदार खेल' },
+      icon: Gamepad2,
+      gradient: 'bg-gradient-primary',
+      description: { en: 'Play educational learning games', hi: 'शैक्षिक खेल खेलें' },
     },
     {
       title: t('fun.quiz'),
       icon: Trophy,
-      gradient: 'bg-gradient-primary',
+      gradient: 'bg-gradient-success',
       description: { en: 'Answer questions and win stars!', hi: 'सवालों के जवाब दें और सितारे जीतें!' },
+    },
+    {
+      title: { en: 'Story Time', hi: 'कहानी का समय' },
+      icon: BookOpen,
+      gradient: 'bg-gradient-warm',
+      description: { en: 'Listen to amazing stories!', hi: 'अद्भुत कहानियाँ सुनें!' },
+    },
+    {
+      title: { en: 'General Knowledge', hi: 'सामान्य ज्ञान' },
+      icon: Sparkles,
+      gradient: 'bg-gradient-primary',
+      description: { en: 'Learn interesting facts!', hi: 'रोचक तथ्य सीखें!' },
+    },
+    {
+      title: { en: 'Kids News', hi: 'बच्चों की खबरें' },
+      icon: Newspaper,
+      gradient: 'bg-gradient-secondary',
+      description: { en: 'Current affairs for children', hi: 'बच्चों के लिए समाचार' },
     },
   ];
 
@@ -64,19 +94,24 @@ const FunActivities = () => {
       </div>
 
       <div className="container mx-auto px-4 py-8">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
           {activities.map((activity, idx) => (
-            <SectionCard
+            <div 
               key={idx}
-              title={activity.title}
-              subtitle={activity.description[useLanguage().language]}
-              icon={activity.icon}
-              gradient={activity.gradient}
-              onClick={() => {
-                // Placeholder action
-                alert(`${activity.title} - Coming soon!`);
-              }}
-            />
+              className="animate-bounce-in hover:scale-105 transition-transform"
+              style={{ animationDelay: `${idx * 0.1}s` }}
+            >
+              <SectionCard
+                title={typeof activity.title === 'string' ? activity.title : activity.title[useLanguage().language]}
+                subtitle={activity.description[useLanguage().language]}
+                icon={activity.icon}
+                gradient={activity.gradient}
+                onClick={() => {
+                  // Placeholder action
+                  alert(`${typeof activity.title === 'string' ? activity.title : activity.title[useLanguage().language]} - Coming soon!`);
+                }}
+              />
+            </div>
           ))}
         </div>
       </div>
