@@ -27,24 +27,57 @@ const TutorDashboard = () => {
       return;
     }
 
-    // Get tutor profile
-    const { data: profile } = await supabase
+    // Get or create tutor profile
+    const { data: existingProfile, error: profileError } = await supabase
       .from('tutor_profiles')
-      .select('*, profiles(*)')
+      .select('*')
       .eq('user_id', session.user.id)
       .maybeSingle();
 
-    if (!profile) {
+    if (profileError) {
+      console.error('Error loading tutor profile', profileError);
       toast({
-        title: "Profile not found",
-        description: "We could not find your tutor profile. Please contact support or try logging out and signing up again.",
-        variant: "destructive",
+        title: 'Error',
+        description: 'Could not load your tutor profile. Please try again.',
+        variant: 'destructive',
       });
       setLoading(false);
       return;
     }
 
-    setTutor(profile);
+    let tutorProfile = existingProfile;
+
+    if (!tutorProfile) {
+      const { data: newProfile, error: insertError } = await supabase
+        .from('tutor_profiles')
+        .insert({
+          user_id: session.user.id,
+        })
+        .select('*')
+        .maybeSingle();
+
+      if (insertError || !newProfile) {
+        console.error('Error creating tutor profile', insertError);
+        toast({
+          title: 'Profile not found',
+          description: 'We could not create your tutor profile. Please contact support.',
+          variant: 'destructive',
+        });
+        setLoading(false);
+        return;
+      }
+
+      tutorProfile = newProfile;
+    }
+
+    // Load basic user info for greeting
+    const { data: profileInfo } = await supabase
+      .from('profiles')
+      .select('full_name')
+      .eq('user_id', session.user.id)
+      .maybeSingle();
+
+    setTutor({ ...tutorProfile, full_name: profileInfo?.full_name });
 
     // Get stats
     const { count: classCount } = await supabase
@@ -121,7 +154,7 @@ const TutorDashboard = () => {
         <div className="container mx-auto flex justify-between items-center">
           <div>
             <h1 className="text-3xl font-bold text-white drop-shadow-lg">
-              Welcome, Teacher {tutor?.profiles?.full_name}! 📚
+              Welcome, Teacher {tutor?.full_name || 'Udaan Mentor'}! 📚
             </h1>
             <p className="text-white/90 mt-1">
               {tutor?.verified ? '✓ Verified Tutor' : 'Pending Verification'}

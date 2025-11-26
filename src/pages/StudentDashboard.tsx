@@ -28,24 +28,58 @@ const StudentDashboard = () => {
       return;
     }
 
-    // Get student profile
-    const { data: profile } = await supabase
+    // Get or create student profile
+    const { data: existingProfile, error: profileError } = await supabase
       .from('student_profiles')
-      .select('*, profiles(*)')
+      .select('*')
       .eq('user_id', session.user.id)
       .maybeSingle();
 
-    if (!profile) {
+    if (profileError) {
+      console.error('Error loading student profile', profileError);
       toast({
-        title: "Profile not found",
-        description: "We could not find your student profile. Please contact support or try logging out and signing up again.",
-        variant: "destructive",
+        title: 'Error',
+        description: 'Could not load your profile. Please try again.',
+        variant: 'destructive',
       });
       setLoading(false);
       return;
     }
 
-    setStudent(profile);
+    let studentProfile = existingProfile;
+
+    if (!studentProfile) {
+      const { data: newProfile, error: insertError } = await supabase
+        .from('student_profiles')
+        .insert({
+          user_id: session.user.id,
+          class_level: 'nursery',
+        })
+        .select('*')
+        .maybeSingle();
+
+      if (insertError || !newProfile) {
+        console.error('Error creating student profile', insertError);
+        toast({
+          title: 'Profile not found',
+          description: 'We could not create your student profile. Please contact support.',
+          variant: 'destructive',
+        });
+        setLoading(false);
+        return;
+      }
+
+      studentProfile = newProfile;
+    }
+
+    // Load basic user info for greeting
+    const { data: profileInfo } = await supabase
+      .from('profiles')
+      .select('full_name')
+      .eq('user_id', session.user.id)
+      .maybeSingle();
+
+    setStudent({ ...studentProfile, full_name: profileInfo?.full_name });
     setLoading(false);
   };
 
@@ -109,7 +143,7 @@ const StudentDashboard = () => {
         <div className="container mx-auto flex justify-between items-center">
           <div>
             <h1 className="text-3xl font-bold text-white drop-shadow-lg">
-              Welcome, {student?.profiles?.full_name}! 👋
+              Welcome, {student?.full_name || 'Super Learner'}! 👋
             </h1>
             <p className="text-white/90 mt-1">Ready to learn something new today?</p>
           </div>
