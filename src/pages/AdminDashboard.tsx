@@ -65,7 +65,7 @@ export default function AdminDashboard() {
         .select("role")
         .eq("user_id", user.id)
         .eq("role", "admin")
-        .single();
+        .maybeSingle();
 
       if (roleError || !roleData) {
         toast({

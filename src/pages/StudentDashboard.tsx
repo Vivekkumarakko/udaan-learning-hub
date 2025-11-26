@@ -33,9 +33,14 @@ const StudentDashboard = () => {
       .from('student_profiles')
       .select('*, profiles(*)')
       .eq('user_id', session.user.id)
-      .single();
+      .maybeSingle();
 
     if (!profile) {
+      toast({
+        title: "Profile not found",
+        description: "Please complete your student profile setup",
+        variant: "destructive",
+      });
       navigate('/auth');
       return;
     }

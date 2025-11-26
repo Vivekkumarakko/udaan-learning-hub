@@ -32,9 +32,14 @@ const TutorDashboard = () => {
       .from('tutor_profiles')
       .select('*, profiles(*)')
       .eq('user_id', session.user.id)
-      .single();
+      .maybeSingle();
 
     if (!profile) {
+      toast({
+        title: "Profile not found",
+        description: "Please complete your tutor profile setup",
+        variant: "destructive",
+      });
       navigate('/auth');
       return;
     }
