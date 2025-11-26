@@ -1,4 +1,4 @@
-import { BookOpen, Sparkles, Video, Heart, Users, Trash2, LogIn } from 'lucide-react';
+import { BookOpen, Sparkles, Video, Heart, Users, Trash2, LogIn, Shield } from 'lucide-react';
 import { SectionCard } from '@/components/SectionCard';
 import { LanguageToggle } from '@/components/LanguageToggle';
 import { UdaanBuddy } from '@/components/UdaanBuddy';
@@ -65,15 +65,27 @@ const Home = () => {
           <p className="text-base md:text-lg text-white/90 mt-2 max-w-2xl mx-auto animate-slide-in-right" style={{ animationDelay: '0.3s' }}>
             {t('app.tagline')}
           </p>
-          <Button 
-            onClick={() => navigate('/auth')} 
-            size="lg"
-            className="mt-6 bg-white text-primary hover:bg-white/90 font-semibold shadow-lg animate-bounce-in hover:animate-pulse-glow"
-            style={{ animationDelay: '0.4s' }}
-          >
-            <LogIn className="w-5 h-5 mr-2" />
-            Login / Sign Up
-          </Button>
+          <div className="flex flex-col sm:flex-row gap-4 mt-6 justify-center">
+            <Button 
+              onClick={() => navigate('/auth')} 
+              size="lg"
+              className="bg-white text-primary hover:bg-white/90 font-semibold shadow-lg animate-bounce-in hover:animate-pulse-glow"
+              style={{ animationDelay: '0.4s' }}
+            >
+              <LogIn className="w-5 h-5 mr-2" />
+              Student / Tutor Login
+            </Button>
+            <Button 
+              onClick={() => navigate('/admin-login')} 
+              size="lg"
+              variant="secondary"
+              className="bg-destructive text-white hover:bg-destructive/90 font-semibold shadow-lg animate-bounce-in hover:animate-pulse-glow border-2 border-white"
+              style={{ animationDelay: '0.5s' }}
+            >
+              <Shield className="w-5 h-5 mr-2" />
+              Admin Access
+            </Button>
+          </div>
         </div>
       </div>
 
