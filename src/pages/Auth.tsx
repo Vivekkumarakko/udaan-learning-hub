@@ -18,6 +18,21 @@ const Auth = () => {
   const { toast } = useToast();
   const [isLogin, setIsLogin] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
+  
+  // Check if user is already logged in
+  useState(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session) {
+        // Redirect based on role
+        supabase.from('user_roles').select('role').eq('user_id', session.user.id).single()
+          .then(({ data }) => {
+            if (data?.role === 'admin') navigate('/admin-dashboard');
+            else if (data?.role === 'tutor') navigate('/tutor-dashboard');
+            else navigate('/student-dashboard');
+          });
+      }
+    });
+  });
 
   // Form state
   const [email, setEmail] = useState('');
@@ -125,7 +140,8 @@ const Auth = () => {
         });
 
         setTimeout(() => {
-          if (roleData?.role === 'student') navigate('/student-dashboard');
+          if (roleData?.role === 'admin') navigate('/admin-dashboard');
+          else if (roleData?.role === 'student') navigate('/student-dashboard');
           else if (roleData?.role === 'tutor') navigate('/tutor-dashboard');
           else navigate('/');
         }, 1000);
@@ -143,15 +159,15 @@ const Auth = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-rainbow flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-rainbow flex items-center justify-center p-4 animate-fade-in-up">
       <LanguageToggle />
       
-      <Card className="w-full max-w-md">
+      <Card className="w-full max-w-md animate-bounce-in shadow-colored">
         <CardHeader className="text-center">
-          <CardTitle className="text-3xl font-bold text-primary">
+          <CardTitle className="text-3xl font-bold text-primary animate-slide-in-right">
             {t('app.title')}
           </CardTitle>
-          <CardDescription className="text-base">
+          <CardDescription className="text-base animate-slide-in-right" style={{ animationDelay: '0.1s' }}>
             {isLogin ? 'Sign in to your account' : 'Create your free account'}
           </CardDescription>
         </CardHeader>
