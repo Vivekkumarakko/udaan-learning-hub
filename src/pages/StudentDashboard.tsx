@@ -38,10 +38,10 @@ const StudentDashboard = () => {
     if (!profile) {
       toast({
         title: "Profile not found",
-        description: "Please complete your student profile setup",
+        description: "We could not find your student profile. Please contact support or try logging out and signing up again.",
         variant: "destructive",
       });
-      navigate('/auth');
+      setLoading(false);
       return;
     }
 
