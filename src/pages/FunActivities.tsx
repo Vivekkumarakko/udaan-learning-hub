@@ -17,60 +17,70 @@ const FunActivities = () => {
       icon: Palette,
       gradient: 'bg-gradient-primary',
       description: { en: 'Draw and color fun pictures!', hi: 'मज़ेदार चित्र बनाएं और रंग भरें!' },
+      route: '/fun/drawing',
     },
     {
       title: t('fun.crafts'),
       icon: Scissors,
       gradient: 'bg-gradient-secondary',
       description: { en: 'Make things with paper and colors', hi: 'कागज़ और रंगों से चीज़ें बनाएं' },
+      route: null,
     },
     {
       title: t('fun.rhymes'),
       icon: Music,
       gradient: 'bg-gradient-success',
       description: { en: 'Sing along with fun songs!', hi: 'मज़ेदार गानों के साथ गाएं!' },
+      route: '/fun/rhymes',
     },
     {
       title: { en: 'Singing & Music', hi: 'गायन और संगीत' },
       icon: Mic,
       gradient: 'bg-gradient-warm',
       description: { en: 'Learn songs and music activities', hi: 'गाने और संगीत गतिविधियाँ सीखें' },
+      route: null,
     },
     {
       title: t('fun.puzzles'),
       icon: Puzzle,
       gradient: 'bg-gradient-secondary',
       description: { en: 'Solve puzzles and brain teasers', hi: 'पहेलियाँ और दिमागी खेल सुलझाएं' },
+      route: null,
     },
     {
       title: { en: 'Fun Games', hi: 'मज़ेदार खेल' },
       icon: Gamepad2,
       gradient: 'bg-gradient-primary',
       description: { en: 'Play educational learning games', hi: 'शैक्षिक खेल खेलें' },
+      route: null,
     },
     {
       title: t('fun.quiz'),
       icon: Trophy,
       gradient: 'bg-gradient-success',
       description: { en: 'Answer questions and win stars!', hi: 'सवालों के जवाब दें और सितारे जीतें!' },
+      route: '/fun/quiz',
     },
     {
       title: { en: 'Story Time', hi: 'कहानी का समय' },
       icon: BookOpen,
       gradient: 'bg-gradient-warm',
       description: { en: 'Listen to amazing stories!', hi: 'अद्भुत कहानियाँ सुनें!' },
+      route: null,
     },
     {
       title: { en: 'General Knowledge', hi: 'सामान्य ज्ञान' },
       icon: Sparkles,
       gradient: 'bg-gradient-primary',
       description: { en: 'Learn interesting facts!', hi: 'रोचक तथ्य सीखें!' },
+      route: null,
     },
     {
       title: { en: 'Kids News', hi: 'बच्चों की खबरें' },
       icon: Newspaper,
       gradient: 'bg-gradient-secondary',
       description: { en: 'Current affairs for children', hi: 'बच्चों के लिए समाचार' },
+      route: null,
     },
   ];
 
@@ -107,8 +117,11 @@ const FunActivities = () => {
                 icon={activity.icon}
                 gradient={activity.gradient}
                 onClick={() => {
-                  // Placeholder action
-                  alert(`${typeof activity.title === 'string' ? activity.title : activity.title[useLanguage().language]} - Coming soon!`);
+                  if (activity.route) {
+                    navigate(activity.route);
+                  } else {
+                    alert(`${typeof activity.title === 'string' ? activity.title : activity.title[useLanguage().language]} - Coming soon!`);
+                  }
                 }}
               />
             </div>
