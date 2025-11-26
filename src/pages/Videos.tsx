@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { ArrowLeft, Play, Wifi } from 'lucide-react';
+import { ArrowLeft, Play, Wifi, ExternalLink } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Switch } from '@/components/ui/switch';
@@ -7,11 +7,31 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import { useNavigate } from 'react-router-dom';
 import { LanguageToggle } from '@/components/LanguageToggle';
 import { UdaanBuddy } from '@/components/UdaanBuddy';
+import { useToast } from '@/components/ui/use-toast';
 
 const Videos = () => {
   const { t, language } = useLanguage();
   const navigate = useNavigate();
+  const { toast } = useToast();
   const [lowDataMode, setLowDataMode] = useState(true); // Default to true to avoid embed issues
+  
+  const handleVideoClick = (videoId: string, title: string) => {
+    const url = `https://www.youtube.com/watch?v=${videoId}`;
+    const opened = window.open(url, '_blank');
+    
+    if (!opened) {
+      toast({
+        title: "Opening Video",
+        description: "Click 'Allow pop-ups' if the video doesn't open",
+        variant: "default",
+      });
+    } else {
+      toast({
+        title: "Opening " + title,
+        description: "Video will open in YouTube",
+      });
+    }
+  };
 
   const videoCategories = [
     {
@@ -173,15 +193,19 @@ const Videos = () => {
                   key={vIdx} 
                   className="overflow-hidden hover:shadow-colored transition-all border-2 card-hover animate-fade-in-up cursor-pointer group"
                   style={{ animationDelay: `${vIdx * 0.1}s` }}
-                  onClick={() => window.open(`https://www.youtube.com/watch?v=${video.videoId}`, '_blank')}
+                  onClick={() => handleVideoClick(video.videoId, video.title[language])}
                 >
                   {/* Thumbnail with Play Overlay */}
                   <div className="relative bg-gradient-primary h-40 flex items-center justify-center text-6xl group-hover:scale-105 transition-transform">
                     {video.thumbnail}
                     <div className="absolute inset-0 bg-black/20 group-hover:bg-black/30 transition-all flex items-center justify-center">
-                      <div className="bg-white/90 rounded-full p-4 group-hover:scale-110 transition-transform">
+                      <div className="bg-white/90 rounded-full p-4 group-hover:scale-110 transition-transform shadow-lg">
                         <Play className="w-8 h-8 text-primary" fill="currentColor" />
                       </div>
+                    </div>
+                    {/* External Link Indicator */}
+                    <div className="absolute top-2 right-2 bg-white/90 rounded-full p-2">
+                      <ExternalLink className="w-4 h-4 text-primary" />
                     </div>
                   </div>
                   
@@ -192,9 +216,11 @@ const Videos = () => {
                     </h3>
                     <div className="flex items-center justify-between">
                       <span className="text-sm text-muted-foreground">{video.duration}</span>
-                      <span className="text-xs text-muted-foreground bg-muted px-2 py-1 rounded-full">
-                        YouTube
-                      </span>
+                      <div className="flex items-center gap-1">
+                        <span className="text-xs text-muted-foreground bg-muted px-2 py-1 rounded-full">
+                          YouTube
+                        </span>
+                      </div>
                     </div>
                   </div>
                 </Card>
