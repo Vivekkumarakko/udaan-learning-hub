@@ -37,10 +37,10 @@ const TutorDashboard = () => {
     if (!profile) {
       toast({
         title: "Profile not found",
-        description: "Please complete your tutor profile setup",
+        description: "We could not find your tutor profile. Please contact support or try logging out and signing up again.",
         variant: "destructive",
       });
-      navigate('/auth');
+      setLoading(false);
       return;
     }
 

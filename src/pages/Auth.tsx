@@ -25,16 +25,18 @@ const Auth = () => {
       const { data: { session } } = await supabase.auth.getSession();
       
       if (session) {
-        // Redirect based on role
-        const { data } = await supabase
+        // Redirect based on role if we have one, otherwise stay on auth
+        const { data, error } = await supabase
           .from('user_roles')
           .select('role')
           .eq('user_id', session.user.id)
           .maybeSingle();
-        
-        if (data?.role === 'admin') navigate('/admin-dashboard');
-        else if (data?.role === 'tutor') navigate('/tutor-dashboard');
-        else navigate('/student-dashboard');
+
+        if (!error && data?.role) {
+          if (data.role === 'admin') navigate('/admin-dashboard');
+          else if (data.role === 'tutor') navigate('/tutor-dashboard');
+          else navigate('/student-dashboard');
+        }
       }
     };
     
