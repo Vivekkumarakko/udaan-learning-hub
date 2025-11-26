@@ -1,7 +1,8 @@
 import { useState } from 'react';
-import { ArrowLeft, Volume2 } from 'lucide-react';
+import { ArrowLeft, Volume2, VolumeX } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
+import { Switch } from '@/components/ui/switch';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useNavigate } from 'react-router-dom';
 import { LanguageToggle } from '@/components/LanguageToggle';
@@ -12,6 +13,7 @@ const Study = () => {
   const navigate = useNavigate();
   const [selectedClass, setSelectedClass] = useState<string | null>(null);
   const [selectedSubject, setSelectedSubject] = useState<string | null>(null);
+  const [isMuted, setIsMuted] = useState(false);
 
   const classes = ['nursery', 'kg', '1', '2', '3'];
   const subjects = ['english', 'hindi', 'math', 'evs', 'social'];
@@ -60,10 +62,19 @@ const Study = () => {
   };
 
   const playAudio = (text: string) => {
-    // Simulated audio playback
-    const utterance = new SpeechSynthesisUtterance(text);
-    utterance.lang = language === 'hi' ? 'hi-IN' : 'en-US';
-    speechSynthesis.speak(utterance);
+    if (isMuted) return;
+    
+    // Cancel any ongoing speech to improve responsiveness
+    speechSynthesis.cancel();
+    
+    // Small delay to ensure cancellation completes
+    setTimeout(() => {
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.lang = language === 'hi' ? 'hi-IN' : 'en-US';
+      utterance.rate = 0.9; // Slightly slower for better clarity
+      utterance.pitch = 1.1; // Slightly higher pitch for children
+      speechSynthesis.speak(utterance);
+    }, 100);
   };
 
   const lessons = selectedSubject ? sampleLessons[selectedSubject as keyof typeof sampleLessons] || [] : [];
@@ -74,16 +85,40 @@ const Study = () => {
       
       {/* Header */}
       <div className="bg-gradient-primary py-6 px-4 shadow-md">
-        <div className="container mx-auto flex items-center">
-          <Button
-            onClick={() => navigate('/')}
-            variant="ghost"
-            size="icon"
-            className="text-white hover:bg-white/20 mr-4"
-          >
-            <ArrowLeft className="w-6 h-6" />
-          </Button>
-          <h1 className="text-3xl font-bold text-white">{t('nav.study')}</h1>
+        <div className="container mx-auto">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center">
+              <Button
+                onClick={() => navigate('/')}
+                variant="ghost"
+                size="icon"
+                className="text-white hover:bg-white/20 mr-4"
+              >
+                <ArrowLeft className="w-6 h-6" />
+              </Button>
+              <h1 className="text-3xl font-bold text-white">{t('nav.study')}</h1>
+            </div>
+            
+            {/* Audio Mute Toggle */}
+            <div className="flex items-center space-x-3 bg-white/20 rounded-full px-4 py-2">
+              {isMuted ? (
+                <VolumeX className="w-5 h-5 text-white" />
+              ) : (
+                <Volume2 className="w-5 h-5 text-white" />
+              )}
+              <span className="text-white text-sm font-medium">Audio</span>
+              <Switch
+                checked={!isMuted}
+                onCheckedChange={(checked) => {
+                  setIsMuted(!checked);
+                  if (checked) {
+                    speechSynthesis.cancel();
+                  }
+                }}
+                className="data-[state=checked]:bg-white"
+              />
+            </div>
+          </div>
         </div>
       </div>
 
