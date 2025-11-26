@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
@@ -20,19 +20,26 @@ const Auth = () => {
   const [isLoading, setIsLoading] = useState(false);
   
   // Check if user is already logged in
-  useState(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
+  useEffect(() => {
+    const checkSession = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      
       if (session) {
         // Redirect based on role
-        supabase.from('user_roles').select('role').eq('user_id', session.user.id).single()
-          .then(({ data }) => {
-            if (data?.role === 'admin') navigate('/admin-dashboard');
-            else if (data?.role === 'tutor') navigate('/tutor-dashboard');
-            else navigate('/student-dashboard');
-          });
+        const { data } = await supabase
+          .from('user_roles')
+          .select('role')
+          .eq('user_id', session.user.id)
+          .maybeSingle();
+        
+        if (data?.role === 'admin') navigate('/admin-dashboard');
+        else if (data?.role === 'tutor') navigate('/tutor-dashboard');
+        else navigate('/student-dashboard');
       }
-    });
-  });
+    };
+    
+    checkSession();
+  }, [navigate]);
 
   // Form state
   const [email, setEmail] = useState('');
@@ -132,7 +139,7 @@ const Auth = () => {
           .from('user_roles')
           .select('role')
           .eq('user_id', data.user.id)
-          .single();
+          .maybeSingle();
 
         toast({
           title: 'Welcome back!',
