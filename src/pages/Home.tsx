@@ -1,9 +1,10 @@
-import { BookOpen, Sparkles, Video, Heart, Users, Trash2 } from 'lucide-react';
+import { BookOpen, Sparkles, Video, Heart, Users, Trash2, LogIn } from 'lucide-react';
 import { SectionCard } from '@/components/SectionCard';
 import { LanguageToggle } from '@/components/LanguageToggle';
 import { UdaanBuddy } from '@/components/UdaanBuddy';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useNavigate } from 'react-router-dom';
+import { Button } from '@/components/ui/button';
 
 const Home = () => {
   const { t } = useLanguage();
@@ -64,6 +65,14 @@ const Home = () => {
           <p className="text-base md:text-lg text-white/90 mt-2 max-w-2xl mx-auto">
             {t('app.tagline')}
           </p>
+          <Button 
+            onClick={() => navigate('/auth')} 
+            size="lg"
+            className="mt-6 bg-white text-primary hover:bg-white/90 font-semibold shadow-lg"
+          >
+            <LogIn className="w-5 h-5 mr-2" />
+            Login / Sign Up
+          </Button>
         </div>
       </div>
 
