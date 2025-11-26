@@ -11,7 +11,7 @@ import { UdaanBuddy } from '@/components/UdaanBuddy';
 const Videos = () => {
   const { t, language } = useLanguage();
   const navigate = useNavigate();
-  const [lowDataMode, setLowDataMode] = useState(false);
+  const [lowDataMode, setLowDataMode] = useState(true); // Default to true to avoid embed issues
 
   const videoCategories = [
     {
@@ -152,15 +152,10 @@ const Videos = () => {
               <h1 className="text-3xl font-bold text-white">{t('nav.videos')}</h1>
             </div>
             
-            {/* Low Data Mode Toggle */}
+            {/* Info Badge */}
             <div className="flex items-center space-x-2 bg-white/20 rounded-full px-4 py-2">
-              <Wifi className="w-5 h-5 text-white" />
-              <span className="text-white text-sm font-medium">{t('videos.low_data')}</span>
-              <Switch
-                checked={lowDataMode}
-                onCheckedChange={setLowDataMode}
-                className="data-[state=checked]:bg-white"
-              />
+              <Play className="w-5 h-5 text-white" />
+              <span className="text-white text-sm font-medium">Opens in YouTube</span>
             </div>
           </div>
         </div>
@@ -174,40 +169,32 @@ const Videos = () => {
             </h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
               {category.videos.map((video, vIdx) => (
-                <Card key={vIdx} className="overflow-hidden hover:shadow-colored transition-all border-2 card-hover animate-fade-in-up" style={{ animationDelay: `${vIdx * 0.1}s` }}>
-                  {/* Video Embed or Thumbnail */}
-                  {!lowDataMode && video.videoId ? (
-                    <div className="relative pb-[56.25%] bg-black">
-                      <iframe
-                        className="absolute top-0 left-0 w-full h-full"
-                        src={`https://www.youtube.com/embed/${video.videoId}`}
-                        title={video.title[language]}
-                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                        allowFullScreen
-                      />
+                <Card 
+                  key={vIdx} 
+                  className="overflow-hidden hover:shadow-colored transition-all border-2 card-hover animate-fade-in-up cursor-pointer group"
+                  style={{ animationDelay: `${vIdx * 0.1}s` }}
+                  onClick={() => window.open(`https://www.youtube.com/watch?v=${video.videoId}`, '_blank')}
+                >
+                  {/* Thumbnail with Play Overlay */}
+                  <div className="relative bg-gradient-primary h-40 flex items-center justify-center text-6xl group-hover:scale-105 transition-transform">
+                    {video.thumbnail}
+                    <div className="absolute inset-0 bg-black/20 group-hover:bg-black/30 transition-all flex items-center justify-center">
+                      <div className="bg-white/90 rounded-full p-4 group-hover:scale-110 transition-transform">
+                        <Play className="w-8 h-8 text-primary" fill="currentColor" />
+                      </div>
                     </div>
-                  ) : (
-                    <div 
-                      className="bg-gradient-primary h-40 flex items-center justify-center text-6xl cursor-pointer"
-                      onClick={() => window.open(`https://www.youtube.com/watch?v=${video.videoId}`, '_blank')}
-                    >
-                      {video.thumbnail}
-                    </div>
-                  )}
+                  </div>
                   
                   {/* Video Info */}
                   <div className="p-4">
-                    <h3 className="font-bold text-lg mb-2 line-clamp-2">{video.title[language]}</h3>
+                    <h3 className="font-bold text-lg mb-2 line-clamp-2 group-hover:text-primary transition-colors">
+                      {video.title[language]}
+                    </h3>
                     <div className="flex items-center justify-between">
                       <span className="text-sm text-muted-foreground">{video.duration}</span>
-                      <Button 
-                        size="sm" 
-                        className="bg-gradient-success hover:scale-105 transition-all"
-                        onClick={() => window.open(`https://www.youtube.com/watch?v=${video.videoId}`, '_blank')}
-                      >
-                        <Play className="w-4 h-4 mr-1" />
-                        {t('action.play')}
-                      </Button>
+                      <span className="text-xs text-muted-foreground bg-muted px-2 py-1 rounded-full">
+                        YouTube
+                      </span>
                     </div>
                   </div>
                 </Card>
