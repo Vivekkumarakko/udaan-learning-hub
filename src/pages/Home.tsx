@@ -54,21 +54,22 @@ const Home = () => {
       <LanguageToggle />
       
       {/* Hero Section */}
-      <div className="relative overflow-hidden bg-gradient-rainbow py-12 px-4">
+      <div className="relative overflow-hidden bg-gradient-rainbow py-12 px-4 animate-fade-in-up">
         <div className="container mx-auto text-center">
-          <h1 className="text-4xl md:text-5xl font-bold text-white mb-3 drop-shadow-lg">
+          <h1 className="text-4xl md:text-5xl font-bold text-white mb-3 drop-shadow-lg animate-bounce-in">
             {t('app.title')}
           </h1>
-          <p className="text-xl md:text-2xl text-white/95 font-medium">
+          <p className="text-xl md:text-2xl text-white/95 font-medium animate-slide-in-right" style={{ animationDelay: '0.2s' }}>
             {t('app.subtitle')}
           </p>
-          <p className="text-base md:text-lg text-white/90 mt-2 max-w-2xl mx-auto">
+          <p className="text-base md:text-lg text-white/90 mt-2 max-w-2xl mx-auto animate-slide-in-right" style={{ animationDelay: '0.3s' }}>
             {t('app.tagline')}
           </p>
           <Button 
             onClick={() => navigate('/auth')} 
             size="lg"
-            className="mt-6 bg-white text-primary hover:bg-white/90 font-semibold shadow-lg"
+            className="mt-6 bg-white text-primary hover:bg-white/90 font-semibold shadow-lg animate-bounce-in hover:animate-pulse-glow"
+            style={{ animationDelay: '0.4s' }}
           >
             <LogIn className="w-5 h-5 mr-2" />
             Login / Sign Up
@@ -80,13 +81,18 @@ const Home = () => {
       <div className="container mx-auto px-4 py-8">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
           {sections.map((section, idx) => (
-            <SectionCard
+            <div 
               key={idx}
-              title={section.title}
-              icon={section.icon}
-              gradient={section.gradient}
-              onClick={() => navigate(section.route)}
-            />
+              className="animate-bounce-in"
+              style={{ animationDelay: `${idx * 0.1}s` }}
+            >
+              <SectionCard
+                title={section.title}
+                icon={section.icon}
+                gradient={section.gradient}
+                onClick={() => navigate(section.route)}
+              />
+            </div>
           ))}
         </div>
       </div>
